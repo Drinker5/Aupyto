@@ -237,7 +237,7 @@ class Player:
     def get_news_with_chains(self):
         haystack = self.get_part_of_screen(
             Coordinates.Encounters.News.news_rect)
-        return self.find_needles_in_haystack(haystack, Images.news_chain, 0.95)
+        return self.find_needles_in_haystack(haystack, Images.news_chain, 0.90)
 
     async def accept_news(self, chain_box):
         news_rect = Coordinates.Encounters.News.news_rect

@@ -2,7 +2,7 @@
 from asyncio.tasks import sleep
 from src.sequence import Module, Sequence
 from .player import Player, MissionStatus
-from transitions import Machine
+from transitions.extensions.asyncio import AsyncMachine
 import asyncio
 import enum
 import logging
@@ -44,7 +44,7 @@ class DeliveringModel:
         ])
 
     async def get_next_mission(self):
-        self.to_getting_next_mission()
+        await self.to_getting_next_mission()
 
     ''' пытаемся начать миссию,
         если есть просроченные миссии, они прокликиваются
@@ -58,20 +58,20 @@ class DeliveringModel:
             # значит нажали на просроченную миссию
             # или не успело прогрузится
             if time == None:
-                self.to_chill()
+                await self.to_chill()
                 await self.player.close()
                 return
 
             if time > self.TIME_TO_ABANDON:
                 await self.player.press_mission_begin()
-                self.to_mission_selected_state()
+                await self.to_mission_selected_state()
             else:  # срок, можно не успеть завершить, отменяем
                 await self.player.press_mission_abandon()
                 await self.player.press_dialog_confirm_button()
-                self.to_chill()
+                await self.to_chill()
                 await self.player.close()
         else:
-            self.to_accepting_news_state()
+            await self.to_accepting_news_state()
             await self.player.close()
 
     async def accepting_news(self):
@@ -88,7 +88,7 @@ class DeliveringModel:
             # если это была единственная новость, то обновим список заранее
             if len(chain_boxes) == 1:
                 await self.player.refresh_news()
-            self.to_chill()
+            await self.to_chill()
         else:
             delta = self.player.get_refresh_cooldown()
             if delta != None:
@@ -101,25 +101,25 @@ class DeliveringModel:
     async def checking_mission(self):
         stage = self.player.get_mission_stage()
         if stage == 0:
-            self.to_mission_stage_0_state()
+            await self.to_mission_stage_0_state()
         elif stage == 1:
-            self.to_mission_stage_1_state()
+            await self.to_mission_stage_1_state()
         elif stage == 2:
-            self.to_mission_stage_2_state()
+            await self.to_mission_stage_2_state()
         elif stage == 3:
-            self.to_mission_stage_3_state()
+            await self.to_mission_stage_3_state()
         else:
             logging.error('нераспарсил этап')
             await self.player.close()
             await self.player.close()
-            self.to_chill()
+            await self.to_chill()
 
     async def complete_stage_0(self):
         self.mission_start_time = datetime.now()
         while not self.player.is_confirm_dialog_showing():
             await self.player.press_mission_begin()
         await self.player.press_dialog_cancel_button()
-        self.to_mission_stage_1_state()
+        await self.to_mission_stage_1_state()
 
     async def autopilot_time(self):
         while not self.player.is_engine_enabled():  # undocking
@@ -153,24 +153,12 @@ class DeliveringModel:
         while not self.player.is_inventory_visible():
             await self.player.press_npc_dialog()
 
-        await self.player.open_inventory()
-
-        await self.player.press_item_hangar_button()
-        while not self.player.is_select_all_active():
-            await self.player.press_item_hangar_button()
-            await self.player.press_select_all_button()
-
-        await self.player.press_move_to_button()
-        await self.player.press_additional_cargo_open()
-        await self.player.press_delivery_hold_additional_cargo()
-        await self.player.close()
-
+        # после диалога груз автоматически попадает в доп. отсек
         # выбираем миссию для старта следующего этапа
-        await self.player.open_menu()
+        # меню уже было открыто выше
         await self.player.open_encounters()
         await self.player.select_first_accepted_mission()
-
-        self.to_mission_stage_2_state()
+        await self.to_mission_stage_2_state()
 
     # груз должен быть на борту
 
@@ -219,7 +207,7 @@ class DeliveringModel:
                                  self.mission_start_time,
                                  self.mission_end_time])
 
-        self.to_chill()
+        await self.to_chill()
 
     async def complete_stage_3(self):
         await self.player.press_mission_begin()
@@ -229,7 +217,7 @@ class DeliveringModel:
         await self.player.close()
 
         self.mission_end_time = datetime.now()
-        self.to_chill()
+        await self.to_chill()
 
 
 class Delivering(Sequence):
@@ -279,34 +267,17 @@ class Delivering(Sequence):
     def __init__(self, player: Player):
         self.player = player
         self.model = DeliveringModel(player)
-        self._machine = Machine(self.model,
-                                states=States,
-                                transitions=self.__transitions,
-                                initial=States.CHILL,
-                                auto_transitions=False)
+        self._machine = AsyncMachine(self.model,
+                                        states=States,
+                                        transitions=self.__transitions,
+                                        initial=States.CHILL,
+                                        auto_transitions=False)
 
-    def _start_loop(self):
-        async def loop():
-            try:
-                while True:
-                    await self._loop_func()
-            except asyncio.CancelledError:
-                raise
-
-        self.loop_task = asyncio.create_task(loop())
+    def _enabled(self):
         logging.info("delivering enabled")
-        self.start_time = datetime.now()
 
-    def _stop_loop(self):
-        if self.loop_task != None:
-            self.loop_task.cancel()
+    def _disabled(self):
         logging.info("delivering disbled")
-
-    def enable(self):
-        self._start_loop()
-
-    def disable(self):
-        self._stop_loop()
 
     async def _loop_func(self):
         if self.model.state is States.CHILL:
@@ -319,7 +290,7 @@ class Delivering(Sequence):
             await self.model.accepting_news()
 
         if self.model.state is States.MISSION_SELECTED:
-            self.model.check_mission()
+            await self.model.check_mission()
 
         if self.model.state is States.MISSION_STAGE_0:
             await self.model.complete_stage_0()
@@ -332,5 +303,3 @@ class Delivering(Sequence):
 
         if self.model.state is States.MISSION_STAGE_3:
             await self.model.complete_stage_3()
-
-        await asyncio.sleep(1)

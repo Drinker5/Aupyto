@@ -8,7 +8,6 @@ from src.LDPlayer960x540 import Coordinates
 from src.sequence import Module, Sequence
 from .player import AutopilotStatus, InfoStatus, Player, MissionStatus
 from transitions.extensions.asyncio import AsyncMachine
-from transitions import Machine
 import asyncio
 import enum
 import logging
