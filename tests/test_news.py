@@ -16,18 +16,9 @@ def test_news_0_chain():
     poses = get_news_with_chains('tests/images/test_news_0_chain.png')
     assert len(poses) == 0
 
-def test_news_1_chain():
-    poses = get_news_with_chains('tests/images/test_news_1_chain.png')
+def test_news_1_chain_3():
+    poses = get_news_with_chains('tests/images/test_news_1_chain_3.png')
     assert len(poses) == 1
-
-def test_news_1_chain_2():
-    poses = get_news_with_chains('tests/images/test_news_1_chain_2.png')
-    assert len(poses) == 1
-
-def test_news_2_chain():
-    poses = get_news_with_chains('tests/images/test_news_2_chain.png')
-    assert len(poses) == 2
-
 
 def test_get_refresh_cooldown():
     res = get_refresh_cooldown('tests/images/test_get_refresh_cooldown.png')

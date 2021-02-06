@@ -18,12 +18,9 @@ class Module:
         date = self.last_run + self.cd + self.activation_time
         return date < datetime.now()
 
-    def activate(self):
-        self.last_run = datetime.now()
-
     async def click(self, player: Player):
         if self.is_available:
-            self.activate()
+            self.last_run = datetime.now()
             await player.click_module(self.position, self.grid)
             return True
         return False

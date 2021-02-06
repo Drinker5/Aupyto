@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",
             "program": "main.py", //${file}
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
         }
     ]
 }

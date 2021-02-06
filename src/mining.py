@@ -37,7 +37,9 @@ class MiningModel:
     _defence_modules = [
         Module(6, timedelta(seconds=1), timedelta(seconds=10), grid=12)
     ]
-
+    _drones = [
+        Module(2, timedelta(seconds=1), timedelta(seconds=10), grid=12)
+    ]
     def __init__(self, player: Player,
                  mining_modules: list[Module],
                  autopilot: Autopilot):
@@ -47,6 +49,11 @@ class MiningModel:
                                     states=States,
                                     initial=States.DOCKED)
         self.autopilot = autopilot
+
+    def _chance(self, percent: float):
+        if percent > 1:
+            percent /= 100.0
+        return random.random() < percent
 
     # region DOCKED State
     async def on_enter_DOCKED(self):
@@ -102,8 +109,9 @@ class MiningModel:
 
         await self.player.click_command(pos)
 
-        for module in self._defence_modules:
-            await module.click(self.player)
+        if self._chance(0.5):
+            for module in self._defence_modules:
+                await module.click(self.player)
 
         self.start_warping_time = datetime.now()
         asyncio.create_task(self.player.scroll_local(3))
@@ -128,8 +136,15 @@ class MiningModel:
             self.is_safe_return = False
 
     async def start_mining(self):
+
+        # Включаем майнеры
         for module in self.mining_modules:
             await module.click(self.player)
+
+        # Активируем дронов
+        if self._chance(0.5):
+            for drone in self._drones:
+                await drone.click(self.player)
 
         async def approach_asteroid():
             await self.player.click(Coordinates.Space.Grid.open_grid_button)

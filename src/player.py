@@ -36,6 +36,9 @@ class Local:
     def is_friendly(self) -> bool:
         if self.minuses > 0 or self.neutrals > 0:
             return False
+        if self.all > 5: # recognize error
+            return False
+
         return True
 
 
