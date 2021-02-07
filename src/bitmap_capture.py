@@ -51,7 +51,6 @@ class ScreenCaputre(IBitmapCapture):
             (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
             bmpstr, 'raw', 'BGRX', 0, 1)
 
-        #im.save('test.png')
         # free our objects
         win32gui.DeleteObject(screenshot.GetHandle())
         mem_dc.DeleteDC()

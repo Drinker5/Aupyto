@@ -350,7 +350,6 @@ class Player:
 
         haystack = self.get_part_of_screen(
             Coordinates.quick_panel_first_button_rect)
-        # haystack.save("test.png")
         pixel_color = (39, 102, 85)
         line_y = haystack.size[1]-1
         x = binary_search(haystack, line_y, pixel_color)

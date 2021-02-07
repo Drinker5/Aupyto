@@ -1,6 +1,7 @@
 # pylint: disable=maybe-no-member
 import logging
 import asyncio, ctypes
+from src.local_checking import LocalChecking
 import winsound
 from src.mining import Mining
 from src.autopilot import Autopilot
@@ -56,6 +57,7 @@ async def main():
             Module(position=0, cd=timedelta(minutes=1),
                    activation_time=timedelta(seconds=10), grid=12)
         ])],
+        ['Local Checking', LocalChecking(player)]
     ]
     i = 1
     for sequence in sequences:
