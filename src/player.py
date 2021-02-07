@@ -310,7 +310,7 @@ class Player:
 
     def get_autopilot_status(self) -> AutopilotStatus:
         pos = self.find_in_rect(
-            Coordinates.autopilot_rect, Images.autopilot_disabled, 0.95)
+            Coordinates.autopilot_rect, Images.autopilot_disabled, 0.90)
         if pos:
             return AutopilotStatus.DISABLED
         pos = self.find_in_rect(
