@@ -57,7 +57,15 @@ async def main():
             Module(position=0, cd=timedelta(minutes=1),
                    activation_time=timedelta(seconds=10), grid=12)
         ])],
-        ['Local Checking', LocalChecking(player)]
+        ['Local Checking', LocalChecking(player)],
+        ['Autopilot', Autopilot(player, [
+            Module(position=0, cd=timedelta(seconds=60),
+                   activation_time=timedelta(seconds=10)),
+            Module(position=1, cd=timedelta(seconds=60),
+                   activation_time=timedelta(seconds=10)),
+            Module(position=2, cd=timedelta(seconds=60),
+                   activation_time=timedelta(seconds=10)),
+        ])],
     ]
     i = 1
     for sequence in sequences:

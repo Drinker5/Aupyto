@@ -212,6 +212,9 @@ class MiningModel:
     async def returning(self):
         if self.player.is_docked_citadel():
             await self.to_DOCKED()
+        
+        elif self.player.is_docked():
+            await self.to_DOCKED()
 
     def on_exit_RETURN(self):
         self.autopilot.disable()

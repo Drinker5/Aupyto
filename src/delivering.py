@@ -80,20 +80,26 @@ class DeliveringModel:
         await self.player.open_news()
 
         chain_boxes = self.player.get_news_with_chains()
+        print("seeing %d missions" % (len(chain_boxes)))
         if len(chain_boxes) > 0:
             box = chain_boxes[0]
             await self.player.accept_news(box)
+            chain_boxes_after_picking = self.player.get_news_with_chains()
+
             while self.player.is_confirm_dialog_showing():
                 await self.player.press_dialog_confirm_button()
             # если это была единственная новость, то обновим список заранее
-            if len(chain_boxes) == 1:
+            if len(chain_boxes_after_picking) <= 0:
                 await self.player.refresh_news()
             await self.to_chill()
         else:
             delta = self.player.get_refresh_cooldown()
             if delta != None:
-                logging.info("refresh waiting %d seconds" % (delta.seconds))
-                await asyncio.sleep(delta.seconds)
+                logging.info("refresh waiting %d seconds" % (delta.seconds + 3))
+                await asyncio.sleep(delta.seconds + 3)
+            
+            # afk перед рефрешом новостей
+            await asyncio.sleep(random.randint(0, 120))
             await self.player.refresh_news()
 
         await self.player.close()
