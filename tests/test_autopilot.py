@@ -16,6 +16,11 @@ def test_autopilot_disabled_2():
     status = get_autopilot_status('tests/images/test_autopilot_disabled_2.png')
     assert status == AutopilotStatus.DISABLED
 
+def test_autopilot_disabled_3():
+    status = get_autopilot_status('tests/images/test_autopilot_disabled_3.png')
+    assert status == AutopilotStatus.DISABLED
+
+
 def test_autopilot_unknown():
     status = get_autopilot_status('tests/images/blank.png')
     assert status == AutopilotStatus.UNKNOWN
