@@ -23,6 +23,8 @@ class Local:
     greens: int
     minuses: int
     pluses: int
+    users: list[str]
+    current_user: str
 
     @property
     def all(self) -> int:
@@ -30,6 +32,10 @@ class Local:
 
     @property
     def neutrals(self) -> int:
+        # Если мы в локале, то вычитаем себя
+        if self.current_user in self.users:
+            return 4 - self.all
+
         return 5 - self.all
 
     @property
@@ -376,6 +382,8 @@ class Player:
             functions.get_relative_click_point(
                 pos,
                 Coordinates.Local.users_relative_rect))
+        parsed_local = pytesseract.image_to_string(haystack, lang='eng', config='--psm 4')
+        users = list(filter(lambda x: x.strip() is not '', parsed_local.split('\n')))
         confidence = 0.92
         allies = self.find_needles_in_haystack(
             haystack, Images.standings_ally, confidence)
@@ -388,6 +396,8 @@ class Player:
         pluses = self.find_needles_in_haystack(
             haystack, Images.standings_plus, confidence)
         return Local(
+            current_user=self.name,
+            users=users,
             alies=len(allies),
             fleet=len(fleets),
             greens=len(greens),

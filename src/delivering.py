@@ -10,7 +10,7 @@ import random
 import csv
 from datetime import datetime, timedelta
 from .autopilot import Autopilot
-
+import src.functions as functions
 
 class States(enum.Enum):
     CHILL = 0
@@ -99,7 +99,11 @@ class DeliveringModel:
                 await asyncio.sleep(delta.seconds + 3)
             
             # afk перед рефрешом новостей
-            await asyncio.sleep(random.randint(0, 120))
+            if functions.chance(50):
+                sleep_time = random.randint(30, 120)
+                logging.info("afk sleeping %d seconds" % (sleep_time))
+                await asyncio.sleep(sleep_time)
+                
             await self.player.refresh_news()
 
         await self.player.close()

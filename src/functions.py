@@ -77,3 +77,8 @@ def createLParam_from_point(point: tuple[int, int]):
 
 def createLParam(lo: int, hi: int):
     return (hi << 16) | (lo & 0xffff)
+
+def chance(percent: float):
+    if percent > 1:
+        percent /= 100.0
+    return random.random() < percent

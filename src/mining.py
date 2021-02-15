@@ -16,7 +16,7 @@ import csv
 from datetime import date, datetime, timedelta
 from .autopilot import Algorithm, Autopilot
 import winsound
-
+import src.functions as functions
 
 class States(enum.Enum):
     DOCKED = 0
@@ -49,10 +49,6 @@ class MiningModel:
                                     initial=States.DOCKED)
         self.autopilot = autopilot
 
-    def _chance(self, percent: float):
-        if percent > 1:
-            percent /= 100.0
-        return random.random() < percent
 
     # region DOCKED State
     async def on_enter_DOCKED(self):
@@ -86,11 +82,10 @@ class MiningModel:
     async def on_enter_UNDOCKED(self):
         await asyncio.sleep(random.randint(5, 8))
 
-        # Предполагаем что автопилот выключен
-        #status = self.player.get_autopilot_status()
-        # if status == AutopilotStatus.DISABLED:
-        await self.player.toggle_autopilot()
-        await asyncio.sleep(2)
+        while self.player.get_autopilot_status() == AutopilotStatus.DISABLED:
+            logging.info("Автопилот выключен. Открываем окно с автопилотом")
+            await self.player.toggle_autopilot()
+
         await self.player.click(Coordinates.Space.Bookmarks.bookmarks[0])
         await self.player.click(Coordinates.Space.Bookmarks.set_as_destination_button)
         await self.player.close_bookmarks()
@@ -108,7 +103,7 @@ class MiningModel:
 
         await self.player.click_command(pos)
 
-        if self._chance(0.5):
+        if functions.chance(0.5):
             for module in self._defence_modules:
                 await module.click(self.player)
 
@@ -124,6 +119,7 @@ class MiningModel:
             # print(local)
             if not local.is_friendly:
                 winsound.Beep(frequency=2500, duration=100)
+                logging.info(local)
                 self._not_friednly_count += 1
             else:
                 self._not_friednly_count = 0
@@ -141,7 +137,7 @@ class MiningModel:
             await module.click(self.player)
 
         # Активируем дронов
-        if self._chance(0.5):
+        if functions.chance(0.5):
             for drone in self._drones:
                 await drone.click(self.player)
 

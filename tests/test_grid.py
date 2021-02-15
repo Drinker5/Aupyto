@@ -22,9 +22,9 @@ def get_locked_target_approach_command_pos(screenshotPath):
     player = Player(ic, 0)
     return player.get_locked_target_approach_command_pos()
 
-def get_local(screenshotPath):
+def get_local(screenshotPath, user = 'undefined'):
     ic = ImageCapture(screenshotPath)
-    player = Player(ic, 0)
+    player = Player(ic, 0, user)
     return player.get_local()
     
 def test_get_warp_command_pos():
@@ -70,6 +70,13 @@ def test_local_1():
     assert local.neutrals == 1
     assert local.is_friendly == False
 
+def test_local_1_self():
+    local = get_local('tests/images/test_local_1.png', 'Jeeriel')
+    assert local.greens == 1
+    assert local.alies == 3
+    assert local.neutrals == 0
+    assert local.is_friendly == True
+
 def test_local_2():
     local = get_local('tests/images/test_local_2.png')
     assert local.greens == 1
@@ -91,7 +98,15 @@ def test_local_5():
     local = get_local('tests/images/test_local_5.png')
     assert local.alies == 3
     assert local.pluses == 1
+    assert local.neutrals == 1
     assert local.is_friendly == False
+
+def test_local_5_self():
+    local = get_local('tests/images/test_local_5.png', 'Jeeroslav')
+    assert local.alies == 3
+    assert local.pluses == 1
+    assert local.neutrals == 0
+    assert local.is_friendly == True
 
 def test_local_6():
     local = get_local('tests/images/test_local_6.png')
@@ -111,3 +126,8 @@ def test_local_8():
     assert local.alies == 3
     assert local.fleet == 2
     assert local.is_friendly == True
+
+def test_local_9():
+    local = get_local('tests/images/test_local_9.png')
+    assert local.minuses == 5
+    assert local.is_friendly == False

@@ -1,6 +1,7 @@
 # pylint: disable=maybe-no-member
 import logging
-import asyncio, ctypes
+import asyncio
+import ctypes
 from src.local_checking import LocalChecking
 import winsound
 from src.mining import Mining
@@ -13,7 +14,10 @@ from src.sequence import Module
 from src.delivering import Delivering
 from src.bitmap_capture import ScreenCaputre
 from datetime import timedelta
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S')
 PROC_TO_FIND = 'dnplayer.exe'
 
 
@@ -40,11 +44,11 @@ async def main():
     ctypes.windll.kernel32.SetConsoleTitleW(selectedWindow[3])
     #rect = win32gui.GetWindowRect(selectedWindow[0])
     #gamehwnd = win32gui.WindowFromPoint((rect[0] + Coordinates.delta[0], rect[1] + Coordinates.delta[1]))
-    gamehwnd = win32gui.FindWindowEx(selectedWindow[0], None, "RenderWindow", None)
+    gamehwnd = win32gui.FindWindowEx(
+        selectedWindow[0], None, "RenderWindow", None)
 
     bitmap_capture = ScreenCaputre(gamehwnd)
     player = Player(bitmap_capture, gamehwnd, selectedWindow[3])
-
     print("Укажите последовательность")
     sequences = [
         ['Delivering', Delivering(player)],
@@ -77,7 +81,7 @@ async def main():
     except:
         print("Ну нихуя непонятно же")
         raise
-    
+
     sequence = sequences[num-1][1]
     sequence.enable()
     await sequence.loop_task
