@@ -45,6 +45,10 @@ def test_is_npc_dialog_with_reply_showing():
     res = is_npc_dialog_with_reply_showing('tests/images/test_is_npc_dialog_with_reply_showing.png')
     assert res == True
 
+def test_is_npc_dialog_with_reply_showing_2():
+    res = is_npc_dialog_with_reply_showing('tests/images/test_is_npc_dialog_with_reply_showing_2.png')
+    assert res == True
+
 def test_is_npc_dialog_with_reply_showing_not():
     res = is_npc_dialog_with_reply_showing('tests/images/test_is_npc_dialog_with_reply_showing_not.png')
     assert res == False

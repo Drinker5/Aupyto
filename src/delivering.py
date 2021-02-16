@@ -183,8 +183,10 @@ class DeliveringModel:
         await self.autopilot_time()
         # ждём окошка диалога
 
+        logging.info("npc dialog waiting")
         while not self.player.is_npc_dialog_with_reply_showing():
             await asyncio.sleep(3)
+        logging.info("npc dialog found")
 
         # afk перед здачей миссии
         if functions.chance(50):

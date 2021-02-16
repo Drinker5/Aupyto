@@ -291,7 +291,7 @@ class Player:
         haystack = self.get_part_of_screen(
             Coordinates.npc_dialog_with_reply_rect)
         pos = self.find_needles_in_haystack(
-            haystack, Images.npc_dialog_reply, 0.99)
+            haystack, Images.npc_dialog_reply, 0.95)
         return len(pos) > 0
 
     async def press_npc_dialog_first_reply(self):
