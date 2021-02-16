@@ -80,7 +80,7 @@ class DeliveringModel:
         await self.player.open_news()
 
         chain_boxes = self.player.get_news_with_chains()
-        print("seeing %d missions" % (len(chain_boxes)))
+        logging.info("seeing %d missions" % (len(chain_boxes)))
         if len(chain_boxes) > 0:
             box = chain_boxes[0]
             await self.player.accept_news(box)
@@ -184,10 +184,13 @@ class DeliveringModel:
         # ждём окошка диалога
 
         while not self.player.is_npc_dialog_with_reply_showing():
-            await asyncio.sleep(1)
+            await asyncio.sleep(3)
 
-        # отыгрываем afk после автопилота 0-120 сек
-        await asyncio.sleep(random.randint(0, 120))
+        # afk перед здачей миссии
+        if functions.chance(50):
+            sleep_time = random.randint(30, 120)
+            logging.info("afk sleeping %d seconds" % (sleep_time))
+            await asyncio.sleep(sleep_time)
 
         await self.player.press_npc_dialog_first_reply()
 
