@@ -62,8 +62,7 @@ class MiningModel:
         if self.player.get_inventory_load_percent() > 0.01:
             logging.info("cargo unloading")
             await asyncio.sleep(2)
-            await self.player.press_first_quick_button()
-            await asyncio.sleep(4)
+            await self.player.click(Coordinates.quick_panel_first_button_rect, 6)
             await self.player.press_ore_hold_button()
             while not self.player.is_select_all_active():
                 await self.player.press_select_all_button()

@@ -2,8 +2,8 @@
 import logging
 import asyncio
 import ctypes
+from src.logistics import Logistics
 from src.local_checking import LocalChecking
-import winsound
 from src.mining import Mining
 from src.autopilot import Autopilot
 import win32gui
@@ -70,6 +70,7 @@ async def main():
             Module(position=2, cd=timedelta(seconds=60),
                    activation_time=timedelta(seconds=10)),
         ])],
+        ['Logistics', Logistics(player)]
     ]
     i = 1
     for sequence in sequences:

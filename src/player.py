@@ -42,7 +42,7 @@ class Local:
     def is_friendly(self) -> bool:
         if self.minuses > 0 or self.neutrals > 0:
             return False
-        if self.all > 5: # recognize error
+        if self.all > 5:  # recognize error
             return False
 
         return True
@@ -115,6 +115,7 @@ class Player:
     """
     async def click_module(self, module_number: int, grid: int = 8):
         await self.click(Coordinates.Space.modules[grid][module_number], 0.2)
+
     async def close_bookmarks(self):
         await self.click(Coordinates.Space.Bookmarks.close_bookmarks_button, 1)
 
@@ -335,9 +336,6 @@ class Player:
     async def close(self):
         await self.click(Coordinates.closeButton)
 
-    async def press_first_quick_button(self):
-        await self.click(Coordinates.quick_panel_first_button_rect)
-
     def get_inventory_load_percent(self):
         def binary_search(haystack: Image, y: int, pixel_color: tuple[int, int, int]):
             low = 0
@@ -382,8 +380,10 @@ class Player:
             functions.get_relative_click_point(
                 pos,
                 Coordinates.Local.users_relative_rect))
-        parsed_local = pytesseract.image_to_string(haystack, lang='eng', config='--psm 4')
-        users = list(filter(lambda x: x.strip() is not '', parsed_local.split('\n')))
+        parsed_local = pytesseract.image_to_string(
+            haystack, lang='eng', config='--psm 4')
+        users = list(filter(lambda x: x.strip()
+                            is not '', parsed_local.split('\n')))
         confidence = 0.92
         allies = self.find_needles_in_haystack(
             haystack, Images.standings_ally, confidence)
@@ -425,7 +425,6 @@ class Player:
             Coordinates.window_rect,
             Images.move_to_window)
         return pos
-
 
     async def press_move_to_button(self):
         await self.click(Coordinates.Inventory.move_to_button, 1)
@@ -471,6 +470,20 @@ class Player:
 
     async def press_ore_hold_button(self):
         await self.click(Coordinates.Inventory.ore_hold_button, 4)
+
+    def is_item_compact_mode(self):
+        pos = self.find_in_rect(
+            Coordinates.Inventory.item_mode_button, Images.item_mode_compact)
+        return pos != None
+
+    def get_selected_item_move_to_button_position(self):
+        pos = self.find_in_rect(
+            Coordinates.window_rect, Images.selected_item_move_to)
+        return pos
+
+    def is_load_amount_window_showing(self):
+        pos = self.find_in_rect(Coordinates.window_rect, Images.load_amount_window)
+        return pos != None
     # endregion
 
     def get_part_of_screen(self, rect) -> Image:

@@ -31,6 +31,9 @@ class Images:
     warp_command = Image.open('images/warp_command.png')
     lock_command = Image.open('images/lock_command.png')
     approach_command = Image.open('images/approach_command.png')
+    item_mode_compact = Image.open('images/item_mode_compact.png')
+    selected_item_move_to = Image.open('images/selected_item_move_to.png')
+    load_amount_window = Image.open('images/load_amount_window.png')
 
 
 class Coordinates:
@@ -81,10 +84,39 @@ class Coordinates:
         item_hangar_button = (13, 103, 186, 72)
         select_all_button = (697, 454, 77, 69)
         move_to_button = (17, 80, 197, 61)
-        move_to_item_hangar_button = (360, 95, 173, 62)
+        move_to_item_hangar_button = (360, 95, 146, 62)
         additional_cargo_search_rect = (470, 84, 185, 81)
         delivery_hold_additional_cargo_search_rect = (390, 17, 475, 192)
         ore_hold_button = (15, 390, 180, 49)
+        item_mode_button = (739, 14, 38, 32)
+        compact_items_grid = [
+            (221, 65, 86, 101),
+            (312, 65, 86, 101),
+            (403, 65, 86, 101),
+            (494, 65, 86, 101),
+            (585, 65, 86, 101),
+            (676, 65, 86, 101),
+            (767, 65, 86, 101),
+            (858, 65, 86, 101),
+
+            (221, 170, 86, 101),
+            (312, 170, 86, 101),
+            (403, 170, 86, 101),
+            (494, 170, 86, 101),
+            (585, 170, 86, 101),
+            (676, 170, 86, 101),
+            (767, 170, 86, 101),
+            (858, 170, 86, 101)
+        ]
+        item_move_to_ships = [
+            (605, 96, 293, 57),
+            (605, 162, 293, 57),
+            (605, 226, 293, 57),
+            (605, 288, 293, 57)
+        ]
+        move_to_load_maximum_point = (920, 178, 30, 47)
+        move_to_load_ok_button = (837, 433, 107, 58)
+        active_ship_rect = (13, 313, 184, 64)
 
     class Space:
         info_rect = (166, 378, 649, 36)
@@ -123,10 +155,14 @@ class Coordinates:
             close_bookmarks_button = (177, 162, 39, 31)
             set_as_destination_button = (234, 202, 162, 49)
             bookmarks = [
-                (2, 197, 170, 58)
+                (2, 197, 170, 58),
+                (2, 261, 170, 53),
+                (2, 317, 170, 53)
             ]
             start_autopilot_buttons = [
-                (174, 197, 50, 58)
+                (174, 197, 50, 58),
+                (174, 263, 50, 46),
+                (174, 320, 50, 46)
             ]
 
         class Grid:
