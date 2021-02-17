@@ -60,6 +60,8 @@ class MiningModel:
 
     async def docked(self):
         if self.player.get_inventory_load_percent() > 0.01:
+            logging.info("cargo unloading")
+            await asyncio.sleep(2)
             await self.player.press_first_quick_button()
             await asyncio.sleep(4)
             await self.player.press_ore_hold_button()
@@ -81,6 +83,8 @@ class MiningModel:
     # region UNDOCKED State
     async def on_enter_UNDOCKED(self):
         await asyncio.sleep(random.randint(5, 8))
+        while self.player.get_autopilot_status() == AutopilotStatus.UNKNOWN:
+            await asyncio.sleep(1)
 
         while self.player.get_autopilot_status() == AutopilotStatus.DISABLED:
             logging.info("Автопилот выключен. Открываем окно с автопилотом")
@@ -202,8 +206,8 @@ class MiningModel:
 
     # region RETURN State
     async def on_enter_RETURN(self):
-        self.autopilot.enable()
         await self.player.toggle_autopilot()
+        self.autopilot.enable()
 
     async def returning(self):
         if self.player.is_docked_citadel():
