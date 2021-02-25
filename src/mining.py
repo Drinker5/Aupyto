@@ -32,6 +32,7 @@ class MiningModel:
     _mining_task = None
     _mining_task_start_time = None
     _not_friednly_count = 0
+    check_times = 0
     _belts = 8
     _defence_modules = [
         Module(6, timedelta(seconds=1), timedelta(seconds=10), grid=12)
@@ -144,42 +145,39 @@ class MiningModel:
             for drone in self._drones:
                 await drone.click(self.player)
 
-        async def approach_asteroid():
-            await self.player.click(Coordinates.Space.Grid.open_grid_button)
-            await self.player.change_grid_filter(8)
-            pos = None
-            # check_times = 0
-            while pos == None:
-                asteroid_number = random.randint(0, 8)
-                asteroid = Coordinates.Space.Grid.targets[asteroid_number]
-                await self.player.grid_expand()
-                await self.player.click(asteroid, 1)
-                pos = self.player.get_approach_command_pos()
-                # не работает
-                # check_times += 1
-                # # Проверка что астероиды закончились
-                # if check_times > 10: 
-                #     await self.to_RETURN()
-                #     self.is_safe_return = True
-                #     return
-
+    async def approach_asteroid(self):
+        await self.player.click(Coordinates.Space.Grid.open_grid_button)
+        await self.player.change_grid_filter(8)
+        asteroid_number = random.randint(0, 8)
+        asteroid = Coordinates.Space.Grid.targets[asteroid_number]
+        await self.player.grid_expand()
+        await self.player.click(asteroid, 1)
+        pos = self.player.get_approach_command_pos()
+        if pos != None:
             await self.player.click_command(pos)
-
-        await approach_asteroid()
-        while True:
-            # включенный движок значит работающий approach
-            # работающий approach значит астероид ещё живой
-            if self.player.is_engine_enabled():
-                await asyncio.sleep(10)
-            else:
-                await approach_asteroid()
 
     async def on_enter_MINING(self):
         self._mining_task = asyncio.create_task(self.start_mining())
         self._mining_task_start_time = datetime.now()
+        self.check_times = 0
 
     async def mining(self):
         await self.check_local()
+
+        # включенный движок значит работающий approach
+        # работающий approach значит астероид ещё живой
+        if self.player.is_engine_enabled():
+            self.check_times = 0
+        else:
+            if self._mining_task is None or self._mining_task.done():
+                self.check_times += 1
+                self._mining_task = asyncio.create_task(self.approach_asteroid())
+        
+        # белт может исчезнуть
+        if self.check_times > 3: 
+            await self.to_RETURN()
+            self.is_safe_return = True
+
         if self.player.get_inventory_load_percent() >= 1.0:
             await self.to_RETURN()
             self.is_safe_return = True
