@@ -91,8 +91,9 @@ def test_local_3():
 
 def test_local_4():
     local = get_local('tests/images/test_local_4.png')
+    assert local.user_count == 3
     assert local.alies == 5
-    assert local.is_friendly == True
+    assert local.is_friendly == False
 
 def test_local_5():
     local = get_local('tests/images/test_local_5.png')
@@ -131,3 +132,9 @@ def test_local_9():
     local = get_local('tests/images/test_local_9.png')
     assert local.minuses == 5
     assert local.is_friendly == False
+
+def test_local_10():
+    local = get_local('tests/images/test_local_10.png', 'Babooshka-chan')
+    assert local.user_count == 3
+    assert local.pluses == 2
+    assert local.is_friendly == True

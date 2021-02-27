@@ -31,18 +31,22 @@ class Local:
         return self.alies+self.fleet+self.greens+self.minuses+self.pluses
 
     @property
+    def user_count(self) -> int:
+        return len(self.users)
+
+    @property
     def neutrals(self) -> int:
         # Если мы в локале, то вычитаем себя
         if self.current_user in self.users:
-            return 4 - self.all
+            return self.user_count - 1 - self.all
 
-        return 5 - self.all
+        return self.user_count - self.all
 
     @property
     def is_friendly(self) -> bool:
         if self.minuses > 0 or self.neutrals > 0:
             return False
-        if self.all > 5:  # recognize error
+        if self.all > self.user_count:  # recognize error
             return False
 
         return True
