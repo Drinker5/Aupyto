@@ -93,6 +93,7 @@ class MiningModel:
         await self.player.click(Coordinates.Space.Bookmarks.bookmarks[0])
         await self.player.click(Coordinates.Space.Bookmarks.set_as_destination_button)
         await self.player.close_bookmarks()
+        await self.player.click(Coordinates.Space.zoom_rect)
 
     async def undocked(self):
         await self.player.click(Coordinates.Space.Grid.open_grid_button)

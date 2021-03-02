@@ -121,6 +121,7 @@ class Coordinates:
     class Space:
         info_rect = (166, 378, 649, 36)
         engine_100_rect = (338, 467, 31, 16)
+        zoom_rect = (462, 453, 36, 22)
         check_warp_pixel = (460, 495)
         not_in_warp_pixel_color = (201, 201, 199)
         # нумерация модулей справа на лево, снизу вверх
