@@ -37,7 +37,10 @@ class Local:
     @property
     def neutrals(self) -> int:
         # Если мы в локале, то вычитаем себя
-        if self.current_user in self.users:
+        def f(user):
+            return functions.levenshtein_distance(user, self.current_user) <= 1
+        bools = map(f, self.users)
+        if any(bools):
             return self.user_count - 1 - self.all
 
         return self.user_count - self.all
