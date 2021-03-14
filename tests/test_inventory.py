@@ -94,3 +94,13 @@ def test_is_load_amount_window_showing_1():
 def test_is_load_amount_window_showing_2():
     res = is_load_amount_window_showing('tests/images/test_is_load_amount_window_showing_2.png')
     assert res == False
+
+def test_find_ore_hold_menu_button_1():
+    ic = ImageCapture('tests/images/test_find_ore_hold_menu_button_1.png')
+    player = Player(ic, 0)
+    assert player.find_ore_hold_menu_button() != None
+
+def test_find_ore_hold_menu_button_2():
+    ic = ImageCapture('tests/images/test_find_ore_hold_menu_button_2.png')
+    player = Player(ic, 0)
+    assert player.find_ore_hold_menu_button() == None

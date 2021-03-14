@@ -475,8 +475,10 @@ class Player:
             Images.delivery_hold)
         return pos
 
-    async def press_ore_hold_button(self):
-        await self.click(Coordinates.Inventory.ore_hold_button, 4)
+    def find_ore_hold_menu_button(self):
+        pos = self.find_in_rect(
+            Coordinates.Inventory.left_menu_rect, Images.ore_hold)
+        return pos
 
     def is_item_compact_mode(self):
         pos = self.find_in_rect(
@@ -514,9 +516,9 @@ class Player:
         im = enhancer.enhance(2)
         return im
 
-    async def click_relative(self, relative_rect, pos):
+    async def click_relative(self, relative_rect, pos, sleep: float = 2.0):
         click_rect = functions.get_relative_click_point(relative_rect, pos)
-        await self.click(click_rect)
+        await self.click(click_rect, sleep)
 
     async def click(self, rect, sleep: float = 2.0):
         functions.click(self.gamehwnd, rect)

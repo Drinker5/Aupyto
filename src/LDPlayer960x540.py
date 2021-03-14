@@ -34,6 +34,7 @@ class Images:
     item_mode_compact = Image.open('images/item_mode_compact.png')
     selected_item_move_to = Image.open('images/selected_item_move_to.png')
     load_amount_window = Image.open('images/load_amount_window.png')
+    ore_hold = Image.open('images/ore_hold.png')
 
 
 class Coordinates:
@@ -81,13 +82,14 @@ class Coordinates:
             stage_rect = (560, 103, 62, 32)
 
     class Inventory:
+        staton_toggle_rect = (10, 60, 190, 38)
+        left_menu_rect = (10, 60, 190, 425)
         item_hangar_button = (13, 103, 186, 72)
         select_all_button = (697, 454, 77, 69)
         move_to_button = (17, 80, 197, 61)
         move_to_item_hangar_button = (360, 95, 146, 62)
         additional_cargo_search_rect = (470, 84, 185, 81)
         delivery_hold_additional_cargo_search_rect = (390, 17, 475, 192)
-        ore_hold_button = (15, 390, 180, 49)
         item_mode_button = (739, 14, 38, 32)
         compact_items_grid = [
             (221, 65, 86, 101),
@@ -154,7 +156,7 @@ class Coordinates:
 
         class Bookmarks:
             close_bookmarks_button = (177, 162, 39, 31)
-            set_as_destination_button = (234, 202, 162, 49)
+            set_as_destination_button = (231, 162, 165, 53)
             bookmarks = [
                 (2, 197, 170, 58),
                 (2, 261, 170, 53),

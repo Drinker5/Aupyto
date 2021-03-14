@@ -1,5 +1,3 @@
-# pylint: disable=maybe-no-member
-
 from asyncio.tasks import sleep
 from typing import Any
 
@@ -27,6 +25,12 @@ class States(enum.Enum):
 
 
 class MiningModel:
+    to_UNDOCKED: Any
+    to_WARPING: Any
+    to_RETURN: Any
+    to_MINING: Any
+    to_DOCKED: Any
+
     state = None
     # to_RETURN: Any
     _mining_task = None
@@ -64,7 +68,16 @@ class MiningModel:
             logging.info("cargo unloading")
             await asyncio.sleep(2)
             await self.player.click(Coordinates.quick_panel_first_button_rect, 6)
-            await self.player.press_ore_hold_button()
+
+            ore_hold = self.player.find_ore_hold_menu_button()
+            if ore_hold is None:
+                await self.player.click(Coordinates.Inventory.staton_toggle_rect)
+                ore_hold = self.player.find_ore_hold_menu_button()
+                if ore_hold is None:
+                    logging.error("ore hold not found")
+                    return
+            
+            await self.player.click_relative(Coordinates.Inventory.left_menu_rect, ore_hold, 4)
             while not self.player.is_select_all_active():
                 await self.player.press_select_all_button()
             while self.player.get_move_to_window_pos() == None:
@@ -87,7 +100,6 @@ class MiningModel:
             await asyncio.sleep(1)
 
         while self.player.get_autopilot_status() == AutopilotStatus.DISABLED:
-            logging.info("Автопилот выключен. Открываем окно с автопилотом")
             await self.player.toggle_autopilot()
 
         await self.player.click(Coordinates.Space.Bookmarks.bookmarks[0])
