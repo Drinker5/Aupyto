@@ -35,6 +35,7 @@ class Images:
     selected_item_move_to = Image.open('images/selected_item_move_to.png')
     load_amount_window = Image.open('images/load_amount_window.png')
     ore_hold = Image.open('images/ore_hold.png')
+    mineral_hold = Image.open('images/mineral_hold.png')
 
 
 class Coordinates:
@@ -116,9 +117,16 @@ class Coordinates:
             (605, 226, 293, 57),
             (605, 288, 293, 57)
         ]
+        item_move_to_ships_additional_cargo = [
+            (911, 96, 40, 57),
+            (911, 162, 40, 57),
+            (911, 226, 40, 57),
+            (911, 288, 40, 57)
+        ]
+        item_move_to_selected_ship_additional_cargo = (785, 42, 168, 45)
         move_to_load_maximum_point = (920, 178, 30, 47)
         move_to_load_ok_button = (837, 433, 107, 58)
-        active_ship_rect = (13, 313, 184, 64)
+        active_ship_with_toggled_station_rect = (12, 144, 116, 75)
 
     class Space:
         info_rect = (166, 378, 649, 36)

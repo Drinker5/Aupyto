@@ -30,7 +30,7 @@ class LocalChecking(Sequence):
 
     async def _loop_func(self):
         local = self.player.get_local()
-        if local != None and not self.player.is_docked():
+        if local != None:
             if not local.is_friendly:
                 winsound.Beep(frequency=2500, duration=100)
                 self._not_friednly_count += 1

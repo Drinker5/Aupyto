@@ -24,12 +24,20 @@ class States(enum.Enum):
     RETURN = 3
 
 
+class Modes(enum.Enum):
+    CARGOHOLD = 0
+    MINERAL = 1
+
+
 class LogisticsModel:
     state = None
     to_LOAD: Any
     to_TRAVEL: Any
     to_UNLOAD: Any
     to_RETURN: Any
+    travel_bookmark_position = -1
+    return_bookmark_position = -1
+    mode: Modes
 
     def __init__(self, player: Player):
         self.player = player
@@ -37,6 +45,10 @@ class LogisticsModel:
                                     states=States,
                                     initial=States.LOAD)
 
+    mineral_loaded = False
+
+    async def on_enter_LOAD(self):
+        self.mineral_loaded = False
 
     async def load(self):
         # уже загружен
@@ -65,6 +77,11 @@ class LogisticsModel:
             await self.player.close()
             return
 
+        if self.mode == Modes.MINERAL and not self.mineral_loaded:
+            await self.load_mineral()
+            self.mineral_loaded = True
+            return
+
         await self.player.click(Coordinates.Inventory.item_move_to_ships[0])
 
         if self.player.is_load_amount_window_showing():
@@ -74,15 +91,26 @@ class LogisticsModel:
             # не загрузилось полностью
             await self.player.close()
             return
-
         await self.player.close()
         # загрузились
         await self.to_TRAVEL()
 
-    async def __autopilot_and_undock(self):
+    async def load_mineral(self):
+        await self.player.click(Coordinates.Inventory.item_move_to_ships_additional_cargo[0])
+        await self.player.click(Coordinates.Inventory.item_move_to_selected_ship_additional_cargo)
+        if self.player.is_load_amount_window_showing():
+            await self.player.click(Coordinates.Inventory.move_to_load_maximum_point)
+            await self.player.click(Coordinates.Inventory.move_to_load_ok_button)
+        # else не загрузилось полностью ну и пофиг
+        await self.player.close()
+
+    async def __autopilot_and_undock(self, pos):
+        if pos <= 0:
+            pos = 1
+
         if self.player.get_autopilot_status() == AutopilotStatus.DISABLED:
             await self.player.toggle_autopilot()
-        await self.player.click(Coordinates.Space.Bookmarks.start_autopilot_buttons[1])
+        await self.player.click(Coordinates.Space.Bookmarks.start_autopilot_buttons[pos-1])
         if not self.player.is_confirm_dialog_showing():
             logging.warn('confirm window not found')
             return
@@ -90,7 +118,16 @@ class LogisticsModel:
         await self.player.press_dialog_confirm_button()
 
     async def on_enter_TRAVEL(self):
-        await self.__autopilot_and_undock()
+        if self.travel_bookmark_position == -1:
+            print("ENTER TRAVEL BOOKMARK POSITION (start from 1): ")
+            try:
+                num = int(input())
+                self.travel_bookmark_position = num
+            except:
+                print("input error")
+                raise
+
+        await self.__autopilot_and_undock(self.travel_bookmark_position)
         await asyncio.sleep(10)
 
     async def travel(self):
@@ -101,15 +138,39 @@ class LogisticsModel:
 
     async def unload(self):
         await self.player.click(Coordinates.quick_panel_first_button_rect, 6)
-        await self.player.click(Coordinates.Inventory.active_ship_rect)
+        await self.player.click(Coordinates.Inventory.staton_toggle_rect, 1)
+        await self.player.click(Coordinates.Inventory.active_ship_with_toggled_station_rect)
         await self.player.click(Coordinates.Inventory.select_all_button)
         await self.player.click(Coordinates.Inventory.move_to_button, 1)
         await self.player.click(Coordinates.Inventory.move_to_item_hangar_button)
+
+        if self.mode == Modes.MINERAL:
+            mineral_hold = self.player.find_mineral_hold_menu_button()
+            if mineral_hold is None:
+                logging.error("ore hold not found")
+            else:
+                await self.player.click_relative(Coordinates.Inventory.left_menu_rect, mineral_hold, 4)
+                while not self.player.is_select_all_active():
+                    await self.player.press_select_all_button()
+                while self.player.get_move_to_window_pos() == None:
+                    await self.player.press_move_to_button()
+                await self.player.press_move_to_item_hangar_button()
+                await self.player.close()
+
         await self.player.close()
         await self.to_RETURN()
 
     async def on_enter_RETURN(self):
-        await self.__autopilot_and_undock()
+        if self.return_bookmark_position == -1:
+            print("ENTER RETURN BOOKMARK POSITION (start from 1): ")
+            try:
+                num = int(input())
+                self.return_bookmark_position = num
+            except:
+                print("input error")
+                raise
+
+        await self.__autopilot_and_undock(self.return_bookmark_position)
         await asyncio.sleep(10)
 
     async def returna(self):
@@ -125,6 +186,22 @@ class Logistics(Sequence):
         self.model = LogisticsModel(player)
 
     def _enabled(self):
+        print("Укажите режим")
+        modes = [
+            ['Cargo', Modes.CARGOHOLD],
+            ['Mineral', Modes.MINERAL]
+        ]
+        i = 1
+        for mode in modes:
+            print("[%d] %s" % (i, mode[0]))
+            i += 1
+
+        try:
+            num = int(input())
+        except:
+            print("Ну нихуя непонятно же")
+            raise
+        self.model.mode = modes[num-1][1]
         logging.info("logistics enabled")
 
     def _disabled(self):

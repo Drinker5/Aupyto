@@ -480,6 +480,11 @@ class Player:
             Coordinates.Inventory.left_menu_rect, Images.ore_hold)
         return pos
 
+    def find_mineral_hold_menu_button(self):
+        pos = self.find_in_rect(
+            Coordinates.Inventory.left_menu_rect, Images.mineral_hold)
+        return pos
+
     def is_item_compact_mode(self):
         pos = self.find_in_rect(
             Coordinates.Inventory.item_mode_button, Images.item_mode_compact)
