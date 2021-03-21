@@ -145,3 +145,10 @@ def test_local_11():
     assert local.alies == 4
     assert local.fleet == 1
     assert local.is_friendly == True
+
+def test_local_12():
+    local = get_local('tests/images/test_local_12.png')
+    assert local.user_count == 5
+    assert local.alies == 4
+    assert local.pluses == 1
+    assert local.is_friendly == True
