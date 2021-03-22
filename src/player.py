@@ -401,7 +401,7 @@ class Player:
         minuses = self.find_needles_in_haystack(
             haystack, Images.standings_minus, confidence)
         pluses = self.find_needles_in_haystack(
-            haystack, Images.standings_plus, confidence)
+            haystack, Images.standings_plus, 0.89)
         return Local(
             current_user=self.name,
             users=users,
