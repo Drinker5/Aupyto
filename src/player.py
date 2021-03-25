@@ -496,7 +496,7 @@ class Player:
         return pos
 
     def is_load_amount_window_showing(self):
-        pos = self.find_in_rect(Coordinates.window_rect, Images.load_amount_window)
+        pos = self.find_in_rect(Coordinates.window_rect, Images.load_amount_window, 0.67)
         return pos != None
     # endregion
 

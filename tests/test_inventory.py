@@ -94,7 +94,11 @@ def test_is_load_amount_window_showing_1():
 def test_is_load_amount_window_showing_2():
     res = is_load_amount_window_showing('tests/images/test_is_load_amount_window_showing_2.png')
     assert res == False
-
+    
+def test_is_load_amount_window_showing_3():
+    res = is_load_amount_window_showing('tests/images/test_is_load_amount_window_showing_3.png')
+    assert res == True
+    
 def test_find_ore_hold_menu_button_1():
     ic = ImageCapture('tests/images/test_find_ore_hold_menu_button_1.png')
     player = Player(ic, 0)

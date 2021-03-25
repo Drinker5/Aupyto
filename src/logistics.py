@@ -37,6 +37,7 @@ class LogisticsModel:
     to_RETURN: Any
     travel_bookmark_position = -1
     return_bookmark_position = -1
+    item_move_to_position = -1
     mode: Modes
 
     def __init__(self, player: Player):
@@ -82,7 +83,15 @@ class LogisticsModel:
             self.mineral_loaded = True
             return
 
-        await self.player.click(Coordinates.Inventory.item_move_to_ships[0])
+        if self.item_move_to_position == -1:
+            print("ENTER SHIP POSITION TO LOAD (start from 1): ")
+            try:
+                num = int(input())
+                self.item_move_to_position = num
+            except:
+                print("input error")
+                raise
+        await self.player.click(Coordinates.Inventory.item_move_to_ships[self.item_move_to_position-1])
 
         if self.player.is_load_amount_window_showing():
             await self.player.click(Coordinates.Inventory.move_to_load_maximum_point)
@@ -118,6 +127,8 @@ class LogisticsModel:
         await self.player.press_dialog_confirm_button()
 
     async def on_enter_TRAVEL(self):
+        if self.player.get_autopilot_status() == AutopilotStatus.DISABLED:
+            await self.player.toggle_autopilot()
         if self.travel_bookmark_position == -1:
             print("ENTER TRAVEL BOOKMARK POSITION (start from 1): ")
             try:
@@ -161,6 +172,8 @@ class LogisticsModel:
         await self.to_RETURN()
 
     async def on_enter_RETURN(self):
+        if self.player.get_autopilot_status() == AutopilotStatus.DISABLED:
+            await self.player.toggle_autopilot()
         if self.return_bookmark_position == -1:
             print("ENTER RETURN BOOKMARK POSITION (start from 1): ")
             try:
